@@ -22,8 +22,9 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public void updateDescription(Long id, String newDescription, String idRequester) {
-		Movie movie = movieRepository.findById(id).get();
-		
+		Movie movie = movieRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("There are no movie with this " + id));
+
 		MovieDescriptionHistory movieDescriptionHistory = 
 				new MovieDescriptionHistory(newDescription, movie.getDescription(), idRequester);
 		movie.setDescription(newDescription);
@@ -39,7 +40,8 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public Movie findById(Long id) {
-		return movieRepository.findById(id).get();
+		return movieRepository.findById(id).
+				orElseThrow(() -> new IllegalArgumentException("There are no movie with this " + id));
 	}
 
 	@Override

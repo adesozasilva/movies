@@ -59,7 +59,7 @@ public class Movie {
 	@ElementCollection
     @CollectionTable(name = "movie_description_history", joinColumns = @JoinColumn(name = "movie_id"))
     @OrderColumn
-	private List<MovieDescriptionHistory> movieDescriptionHistory = new ArrayList<>();
+	private final List<MovieDescriptionHistory> movieDescriptionHistory = new ArrayList<>();
 	
 	@Version
 	private Integer version;

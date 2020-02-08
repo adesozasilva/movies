@@ -1,12 +1,10 @@
 package br.com.adesozasilva.movies.entrypoints;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,18 +20,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.adesozasilva.movies.BackendApplication;
+import br.com.adesozasilva.movies.MovieApplication;
 import br.com.adesozasilva.movies.core.entities.Movie;
 import br.com.adesozasilva.movies.core.entities.MovieDetails;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BackendApplication.class)
+@SpringBootTest(classes = MovieApplication.class)
 @WebAppConfiguration
 public class MovieControllerTest {
 
@@ -52,7 +48,7 @@ public class MovieControllerTest {
 	@Test
 	public void testUpdateDescription() throws  Exception {
 		//Given
-		Long id = 1l;
+		Long id = 1L;
 		Movie movie = getMovieById(id);
 		Integer oldVersion = movie.getVersion();
 		String oldDescription = movie.getDescription();
@@ -63,7 +59,7 @@ public class MovieControllerTest {
 		//Then
 		movie = getMovieById(id);
 		assertTrue(oldVersion < movie.getVersion());
-		assertTrue(!oldDescription.equals(movie.getDescription()));
+		assertNotEquals(oldDescription, movie.getDescription());
 		
 	}
 
@@ -96,59 +92,55 @@ public class MovieControllerTest {
 	}
 
 	private List<Movie> whenRequestMoviesBySaga(String saga)
-			throws Exception, UnsupportedEncodingException, JsonProcessingException, JsonMappingException {
+			throws Exception {
 		MvcResult result = mockMvc.perform(get("/movies?saga="+saga))
 				.andExpect(status().isOk()).andReturn();
 		String json = result.getResponse().getContentAsString();
-		List<Movie> movies = objectMapper.readValue(json, new TypeReference<List<Movie>>() {});
-		return movies;
+		return objectMapper.readValue(json, new TypeReference<List<Movie>>() {});
 	}
 
 	@Test
 	public void testShowMovieDetails() throws  Exception {
 		//Given
-		Long id = 1l;
+		Long id = 1L;
 		String details = getMovieById(id).getDetails();
 
 		//When
 		MovieDetails movieDetails = whenRequestMovieDetails(id);
 
 		//Then
-		assertTrue(details.equals(movieDetails.getDetails()));
+		assertEquals(details, movieDetails.getDetails());
 	}
 
 	private MovieDetails whenRequestMovieDetails(Long id)
-			throws Exception, UnsupportedEncodingException, JsonProcessingException, JsonMappingException {
+			throws Exception {
 		MvcResult result = mockMvc.perform(get("/movie/"+id+"/details")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				).andExpect(status().isOk()).andReturn();
 
 		String json = result.getResponse().getContentAsString();
-		MovieDetails movieDetails = objectMapper.readValue(json, MovieDetails.class);
-		return movieDetails;
+		return objectMapper.readValue(json, MovieDetails.class);
 	}
 
 	@Test
 	public void testShowMovieInfo() throws  Exception {
         //Given
-		Long id = 1l;
+		Long id = 1L;
 		
 		//When
 		Movie movie = getMovieById(id);
 		
 		//Then
-		assertTrue(movie.getId().equals(id));
+		assertEquals(movie.getId(), id);
 	}
 
 
-	private Movie getMovieById(Long id)
-			throws Exception, UnsupportedEncodingException, JsonProcessingException, JsonMappingException {
+	private Movie getMovieById(Long id) throws Exception {
 		MvcResult result = mockMvc.perform(get("/movie/"+id)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				).andExpect(status().isOk()).andReturn();
 
 		String json = result.getResponse().getContentAsString();
-		Movie movie = objectMapper.readValue(json, Movie.class);
-		return movie;
+		return objectMapper.readValue(json, Movie.class);
 	}
 }

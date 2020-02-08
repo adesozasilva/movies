@@ -21,32 +21,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.adesozasilva.movies.core.entities.Movie;
 import br.com.adesozasilva.movies.dataproviders.MovieRepository;
 
+@SuppressWarnings("unused")
 @SpringBootApplication
 @EnableJpaRepositories(basePackageClasses = MovieRepository.class)
 @EntityScan(basePackageClasses = Movie.class)
-@ComponentScan(basePackageClasses = BackendApplication.class)
+@ComponentScan(basePackageClasses = MovieApplication.class)
 @Configuration
-public class BackendApplication {
+public class MovieApplication {
 
-	private Logger log = LoggerFactory.getLogger(BackendApplication.class);
+	private final Logger log = LoggerFactory.getLogger(MovieApplication.class);
 
 	@Bean
 	public CommandLineRunner demo(MovieRepository repository) {
 		return (args) -> {
-
 			log.info("Persistindo filmes...");
 			Resource resource = new ClassPathResource("movies.json");
 			List<Movie> movies = new ObjectMapper().readValue(resource.getInputStream(), new TypeReference<List<Movie>>(){});
-
-			movies.forEach(movie -> {
-				repository.save(movie);
-			});
+			movies.forEach(repository::save);
 			log.info("Persistido filmes");
 		};
 	}
-	
+
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(MovieApplication.class, args);
 	}
 
 }
