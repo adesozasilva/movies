@@ -34,12 +34,12 @@ public class MovieController {
 	    return ResponseEntity.ok().body(movieService.findBySaga(saga));
 	}
 	
-	@GetMapping("/movie/{id}/details")
+	@GetMapping("/movies/{id}/details")
 	public ResponseEntity<?> showMovieDetails(@PathVariable("id") Long id){
 		return ResponseEntity.ok().body(movieService.showMovieDetails(id));
 	}
 	
-	@GetMapping("/movie/{id}")
+	@GetMapping("/movies/{id}")
 	public ResponseEntity<?> showMovieInfo(@PathVariable("id") Long id){
 		return ResponseEntity.ok().body(movieService.findById(id));
 	}
